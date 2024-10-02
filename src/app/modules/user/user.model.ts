@@ -28,8 +28,12 @@ const userSchema = new Schema<TUser, ExtendModel>(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
-      required: true,
+      enum: ["admin", "user", "superAdmin"],
+      default: "user",
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
     },
   },
   {

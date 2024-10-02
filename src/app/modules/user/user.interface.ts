@@ -8,7 +8,11 @@ export interface TUser {
   password: string;
   phone: string;
   address: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "superAdmin";
+  lastLogin: string | null;
+}
+export interface TUserRoleUpdate {
+  role: "admin" | "user" | "superAdmin";
 }
 
 export type TUserRole = keyof typeof USER_ROLE;

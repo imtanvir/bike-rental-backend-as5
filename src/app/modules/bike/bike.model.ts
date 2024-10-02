@@ -10,6 +10,16 @@ const BikeSchema = new Schema<TBike, BikeExtend>({
     type: String,
     required: true,
   },
+  image: {
+    type: [
+      {
+        _id: false,
+        id: { type: String, required: true },
+        url: { type: String, required: true },
+      },
+    ],
+    default: [],
+  },
   pricePerHour: {
     type: Number,
     required: true,
@@ -17,6 +27,14 @@ const BikeSchema = new Schema<TBike, BikeExtend>({
   isAvailable: {
     type: Boolean,
     default: true,
+  },
+  rating: {
+    type: Number,
+    default: 0,
+  },
+  totalRating: {
+    type: Number,
+    default: 0,
   },
   cc: {
     type: Number,
@@ -32,6 +50,26 @@ const BikeSchema = new Schema<TBike, BikeExtend>({
   },
   brand: {
     type: String,
+    required: true,
+  },
+  weight: {
+    type: String,
+    required: true,
+  },
+  frameSize: {
+    type: String,
+    required: true,
+  },
+  tireSize: {
+    type: String,
+    required: true,
+  },
+  gears: {
+    type: String,
+    required: true,
+  },
+  features: {
+    type: [String],
     required: true,
   },
 });

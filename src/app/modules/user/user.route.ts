@@ -9,13 +9,13 @@ const router = express.Router();
 
 router.get(
   "/me",
-  authCheck(USER_ROLE.admin, USER_ROLE.user),
+  authCheck(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.user),
   UserController.getProfile
 );
 
 router.put(
   "/me",
-  authCheck(USER_ROLE.admin, USER_ROLE.user),
+  authCheck(USER_ROLE.admin, USER_ROLE.superAdmin, USER_ROLE.user),
   requestValidation(UserValidation.profileUpdateValidationSchema),
   UserController.updateProfile
 );

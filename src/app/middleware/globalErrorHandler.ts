@@ -50,7 +50,7 @@ const globalErrorHandler = (
     statusCode = errorFormat.statusCode;
     message = errorFormat.message;
     errorSource = errorFormat.errorSources;
-  } else if (err instanceof jwt.TokenExpiredError) {
+  } else if (err.name === "TokenExpiredError") {
     // JWT TokenExpiredError
     statusCode = httpStatus.UNAUTHORIZED;
     message = "Unauthorized. Token has expired.";

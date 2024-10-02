@@ -5,18 +5,20 @@ import config from "../config";
 import { TUserRole } from "../modules/user/user.interface";
 import { UserModel } from "../modules/user/user.model";
 import catchAsync from "../utils/catchAsync";
+import AppError from "./AppError";
 
 const authCheck = (...requiredRole: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log({ headerMia: req.headers.authorization });
+
     const bearerToken = req.headers.authorization as string;
     // Exclude the Bearer from token
-    const token = bearerToken.split(" ")[1];
+    const token = bearerToken?.split(" ")[1];
     if (token === "" || !token) {
-      return res.status(httpStatus.UNAUTHORIZED).json({
-        success: false,
-        statusCode: 401,
-        message: "You are unauthorized!",
-      });
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "This user is not authorized !"
+      );
     }
 
     // check if token hacked or invalid by refresh token
@@ -27,31 +29,34 @@ const authCheck = (...requiredRole: TUserRole[]) => {
     ) as JwtPayload;
 
     // Verify Token and retrieve data from it
-    const decoded = jwt.verify(
-      token as string,
-      config.jwt_secret as string
-    ) as JwtPayload;
+    let decoded;
+    try {
+      decoded = jwt.verify(token, config.jwt_secret as string) as JwtPayload;
+    } catch (err) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized user request!");
+    }
 
-    // if (refreshTokenDecoded?.iat !== decoded?.iat) {}
     const isUserExist = await UserModel.isUserExist(decoded?.email);
     if (!isUserExist) {
-      return res.status(httpStatus.UNAUTHORIZED).json({
-        success: false,
-        statusCode: 401,
-        message: "Unauthorized user request!",
-      });
-    } else if (refreshTokenDecoded?.iat !== decoded?.iat) {
-      return res.status(httpStatus.UNAUTHORIZED).json({
-        success: false,
-        statusCode: 401,
-        message: "Unauthorized user access!",
-      });
-    } else if (requiredRole && !requiredRole.includes(decoded.role)) {
-      return res.status(httpStatus.UNAUTHORIZED).json({
-        success: false,
-        statusCode: 401,
-        message: "You have no access to this route",
-      });
+      throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
+    }
+
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (
+      !refreshTokenDecoded?.exp ||
+      currentTime > refreshTokenDecoded.exp ||
+      !decoded?.exp ||
+      currentTime > decoded.exp
+    ) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Token session expired!");
+    }
+
+    if (requiredRole && !requiredRole.includes(decoded.role)) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "User don't have access to this route!"
+      );
     }
 
     req.user = decoded;

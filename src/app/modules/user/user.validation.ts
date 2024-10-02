@@ -31,14 +31,24 @@ const profileUpdateValidationSchema = z.object({
       .string()
       .max(200, "Address must be at most 200 characters long")
       .optional(),
-    role: z
-      .enum(["admin", "user"], {
-        message: "Role must be either 'admin' or 'user'",
-      })
-      .optional(),
+  }),
+});
+
+// role: z
+//   .enum(["admin", "user", "superAdmin"], {
+//     message: "Role must be either 'admin' or 'user1'",
+//   })
+//   .optional(),
+
+const userRoleUpdateSchema = z.object({
+  body: z.object({
+    role: z.enum(["admin", "user"], {
+      message: "Role must be either 'admin' or 'user'",
+    }),
   }),
 });
 
 export const UserValidation = {
   profileUpdateValidationSchema,
+  userRoleUpdateSchema,
 };

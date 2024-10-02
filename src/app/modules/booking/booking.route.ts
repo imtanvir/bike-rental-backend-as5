@@ -14,10 +14,25 @@ router.post(
   rentBikeController.rentBike
 );
 
+// End riding and submit estimated time
 router.put(
-  "/:id/return",
-  authCheck(USER_ROLE.admin),
+  "/end_ride/:id",
+  authCheck(USER_ROLE.user),
+  rentBikeController.rentEndSubmit
+);
+
+// accept bike and calculate total cost of ride by Admin only
+router.put(
+  "/:id",
+  authCheck(USER_ROLE.admin, USER_ROLE.superAdmin),
   rentBikeController.rentBikeReturn
+);
+
+// paid rental
+router.put(
+  "/paid/:id",
+  authCheck(USER_ROLE.user),
+  rentBikeController.rentCostPayment
 );
 
 router.get("/", authCheck(USER_ROLE.user), rentBikeController.userRentals);

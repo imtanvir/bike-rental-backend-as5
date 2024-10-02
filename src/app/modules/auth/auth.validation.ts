@@ -21,9 +21,9 @@ const signUpValidationSchema = z.object({
         "Phone number must be numeric and between 1 to 11 digits long"
       ),
     address: z.string().max(200, "Address must be at most 200 characters long"),
-    role: z.enum(["admin", "user"], {
-      message: "Role must be either 'admin' or 'user'",
-    }),
+    // role: z.enum(["admin", "user"], {
+    //   message: "Role must be either 'admin' or 'user'",
+    // }),
   }),
 });
 

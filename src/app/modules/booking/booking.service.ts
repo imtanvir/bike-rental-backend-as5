@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import httpStatus from "http-status";
 import { JwtPayload } from "jsonwebtoken";
 import mongoose, { Types } from "mongoose";
@@ -54,11 +55,7 @@ const rentBikeReturn = async (_id: string) => {
 
   try {
     session.startTransaction();
-    const updateBikeStatus = await BikeModel.findByIdAndUpdate(
-      { _id: isRentExist?.bikeId },
-      { isAvailable: true },
-      { new: true, session }
-    );
+    const bikeDetails = await BikeModel.findOne({ _id: isRentExist?.bikeId });
 
     // Rent details update operation
     // UTC time format
@@ -80,7 +77,7 @@ const rentBikeReturn = async (_id: string) => {
     );
 
     const totalCost: number =
-      (updateBikeStatus?.pricePerHour as number) * calculateRentHours;
+      (bikeDetails?.pricePerHour as number) * calculateRentHours;
 
     // But return the Bike Return time UTC time zone as a value
     const returnRentedBike = await RentalModel.findOneAndUpdate(
@@ -88,7 +85,7 @@ const rentBikeReturn = async (_id: string) => {
       {
         returnTime: return_time,
         totalCost: totalCost,
-        isReturned: true,
+        pendingCalculation: false,
       },
       {
         new: true,
@@ -112,9 +109,50 @@ const rentBikeReturn = async (_id: string) => {
   }
 };
 
-const userRentals = async (user: JwtPayload) => {
+const rentCostPayment = async (rentId: string) => {
+  const rent = await RentalModel.findById(rentId);
+
+  if (!rent) {
+    throw new AppError(httpStatus.NOT_FOUND, "Rental details not exist");
+  }
+
+  const result = await RentalModel.findOneAndUpdate(
+    { _id: rentId },
+    {
+      isPaid: true,
+    },
+    {
+      new: true,
+    }
+  );
+
+  const updateStatus = await BikeModel.findByIdAndUpdate(
+    {
+      _id: rent?.bikeId,
+    },
+    {
+      isAvailable: true,
+    },
+    {
+      new: true,
+    }
+  );
+
+  return result;
+};
+
+const userRentals = async (user: JwtPayload, isReturned: boolean) => {
+  let query: Record<string, unknown> = {};
+  if (isReturned === true) {
+    query.isReturned = true;
+  } else if (isReturned === false) {
+    query.isReturned = false;
+  }
   const { _id } = user;
-  const result = await RentalModel.find({ userId: _id });
+
+  const result = await RentalModel.find({ userId: _id, ...query }).populate(
+    "bikeId"
+  );
 
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, "User rentals not exist");
@@ -122,8 +160,31 @@ const userRentals = async (user: JwtPayload) => {
 
   return result;
 };
+
+const rentEndSubmit = async (
+  rentId: string,
+  newReturnTime: { [key: string]: Date }
+) => {
+  const estimatedReturnTime = new Date(newReturnTime?.estimatedReturnTime);
+  const rent = await RentalModel.findById(rentId);
+  if (!rent) {
+    throw new AppError(httpStatus.NOT_FOUND, "Rental details not exist");
+  }
+
+  const result = await RentalModel.findByIdAndUpdate(
+    rentId,
+    { pendingCalculation: true, estimatedReturnTime },
+    {
+      new: true,
+    }
+  );
+
+  return result;
+};
 export const rentBikeServices = {
   rentBike,
   rentBikeReturn,
   userRentals,
+  rentCostPayment,
+  rentEndSubmit,
 };

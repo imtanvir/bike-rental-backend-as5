@@ -8,6 +8,12 @@ const bikeValidationSchema = z.object({
       .trim()
       .min(1, "Name cannot be empty"),
 
+    // image: z
+    //   .string({
+    //     required_error: "Image is required",
+    //   })
+    //   .optional()
+    //   .default(""),
     description: z
       .string({
         required_error: "Description is required",
@@ -52,6 +58,23 @@ const bikeValidationSchema = z.object({
         required_error: "Brand is required",
       })
       .min(1, "Brand cannot be empty"),
+    weight: z.string({
+      required_error: "Weight is required",
+    }),
+    frameSize: z.string({
+      required_error: "Frame size is required",
+    }),
+    tireSize: z.string({
+      required_error: "Tire size is required",
+    }),
+    gears: z.string({
+      required_error: "Gears is required",
+    }),
+    features: z.array(
+      z.string({
+        required_error: "Features is required",
+      })
+    ),
   }),
 });
 

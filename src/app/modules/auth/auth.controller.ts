@@ -1,5 +1,4 @@
 import httpStatus from "http-status";
-import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthService } from "./auth.service";
@@ -20,11 +19,13 @@ const signUpUser = catchAsync(async (req, res) => {
 const logInUser = catchAsync(async (req, res) => {
   const loginCredential = req.body;
   const result = await AuthService.logInUser(loginCredential);
-  const { user, accessToken, refreshToken } = result;
+  const { jwtPayload, accessToken, refreshToken } = result;
 
   res.cookie("refreshToken", refreshToken, {
-    secure: config.node_env === "production",
+    // secure: config.node_env === "production",
+    secure: true,
     httpOnly: true,
+    sameSite: "none",
   });
 
   sendResponse(res, {
@@ -32,10 +33,25 @@ const logInUser = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     message: "User logged in successfully",
     token: accessToken,
-    data: user,
+    data: jwtPayload,
+  });
+});
+
+const refreshToken = catchAsync(async (req, res) => {
+  const refreshToken = req.cookies;
+
+  console.log({ refreshTokenTP: refreshToken });
+  const result = await AuthService.refreshToken(refreshToken.refreshToken);
+  console.log({ newAccess: result });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Access token retrieve successfully!",
+    data: result,
   });
 });
 export const AuthController = {
   signUpUser,
   logInUser,
+  refreshToken,
 };

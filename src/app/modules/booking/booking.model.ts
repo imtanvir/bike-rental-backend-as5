@@ -22,12 +22,28 @@ const rentalSchema = new Schema<TRental>(
       type: Date,
       default: null,
     },
+    estimatedReturnTime: {
+      type: Date,
+      default: null,
+    },
     totalCost: {
       type: Number,
       required: true,
       default: 0,
     },
     isReturned: {
+      type: Boolean,
+      default: false,
+    },
+    advancePaid: {
+      type: Number,
+      default: 0,
+    },
+    pendingCalculation: {
+      type: Boolean,
+      default: false,
+    },
+    isPaid: {
       type: Boolean,
       default: false,
     },
