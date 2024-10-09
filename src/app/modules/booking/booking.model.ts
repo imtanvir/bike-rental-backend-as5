@@ -47,6 +47,10 @@ const rentalSchema = new Schema<TRental>(
       type: Boolean,
       default: false,
     },
+    discountApplied: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

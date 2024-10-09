@@ -25,10 +25,13 @@ const getProfile = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateProfile = catchAsync(async (req, res) => {
-  const user = req.user;
-  const { _id } = user;
+  // const user = req.user;
+  const { id } = req.params;
   const payload = req.body;
-  const result = await UserService.updateProfile(_id, payload);
+
+  const imageFiles =
+    Array.isArray(req?.files) && req.files !== undefined ? req.files : [];
+  const result = await UserService.updateProfile(id, payload, imageFiles);
 
   sendResponse(res, {
     success: true,
@@ -71,10 +74,22 @@ const updateUserRole = catchAsync(async (req, res) => {
   });
 });
 
+const deleteUser = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await UserService.userDelete(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "User deleted successfully",
+    data: result,
+  });
+});
 export const UserController = {
   getProfile,
   updateProfile,
   updateUserRole,
   getAllUsers,
   getAdmins,
+  deleteUser,
 };

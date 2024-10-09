@@ -2,6 +2,11 @@ import { model, Schema } from "mongoose";
 import { TCoupon } from "./coupon.interface";
 
 const CouponSchema = new Schema<TCoupon>({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+    required: [true, "userId is required"],
+  },
   couponCode: {
     type: String,
     required: true,
@@ -10,7 +15,7 @@ const CouponSchema = new Schema<TCoupon>({
     type: Number,
     required: true,
   },
-  expiryDate: {
+  createDate: {
     type: Date,
     required: true,
   },

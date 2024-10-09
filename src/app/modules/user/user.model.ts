@@ -8,6 +8,17 @@ const userSchema = new Schema<TUser, ExtendModel>(
       type: String,
       required: true,
     },
+    image: {
+      type: [
+        {
+          _id: false,
+          id: { type: String, required: true },
+          url: { type: String, required: true },
+          isRemove: { type: Boolean, default: false },
+        },
+      ],
+      default: [],
+    },
     email: {
       type: String,
       required: true,

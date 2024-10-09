@@ -13,6 +13,19 @@ const createCoupon = catchAsync(async (req, res) => {
   });
 });
 
+const couponCheck = catchAsync(async (req, res) => {
+  const { couponCode, userId }: { couponCode: string; userId: string } =
+    req.body;
+  const result = await CouponServices.couponCheck(couponCode, userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Coupon checked and found successfully!",
+    data: result,
+  });
+});
+
 const getAllCoupons = catchAsync(async (req, res) => {
   const result = await CouponServices.getAllCoupons();
   sendResponse(res, {
@@ -51,4 +64,5 @@ export const CouponController = {
   getAllCoupons,
   updateCoupon,
   deleteCoupon,
+  couponCheck,
 };

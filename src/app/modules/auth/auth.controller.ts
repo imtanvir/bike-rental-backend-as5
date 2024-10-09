@@ -5,7 +5,14 @@ import { AuthService } from "./auth.service";
 
 const signUpUser = catchAsync(async (req, res) => {
   const userData = req.body;
-  const result = await AuthService.signUpUserIntoDB(userData);
+  if (!req.files) {
+    throw new Error("User Photo not provided!");
+  }
+  const result = await AuthService.signUpUserIntoDB(
+    // eslint-disable-next-line no-undef
+    req?.files as Express.Multer.File[],
+    userData
+  );
   // remove password field from response due to security purpose even its value now empty.
   const userResponse = { ...result.toObject(), password: undefined };
   sendResponse(res, {
@@ -40,9 +47,8 @@ const logInUser = catchAsync(async (req, res) => {
 const refreshToken = catchAsync(async (req, res) => {
   const refreshToken = req.cookies;
 
-  console.log({ refreshTokenTP: refreshToken });
   const result = await AuthService.refreshToken(refreshToken.refreshToken);
-  console.log({ newAccess: result });
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

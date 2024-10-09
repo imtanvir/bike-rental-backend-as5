@@ -10,7 +10,15 @@ const app: Application = express();
 export const stripe = new Stripe(config.stripe_sk ?? "");
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://bike-rental-frontend-as5-gx.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
 // app.get("/api/v1", Routers);
 app.use("/api", Routers);

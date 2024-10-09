@@ -33,9 +33,19 @@ router.get("/:id", BikeControllers.getSingleBike);
 router.put(
   "/:id",
   authCheck(USER_ROLE.admin, USER_ROLE.superAdmin),
+  upload.array("file", 1),
+  (req: Request, res: Response, next: NextFunction) => {
+    try {
+      req.body = JSON.parse(req.body.data);
+      next();
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  },
   requestValidation(BikeValidationSchema.bikeUpdateValidationSchema),
   BikeControllers.updateBike
 );
+router.post("/contact-us", BikeControllers.SendFeedback);
 
 router.delete(
   "/:id",

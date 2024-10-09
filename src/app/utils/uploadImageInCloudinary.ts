@@ -23,14 +23,6 @@ export const sendImageToCloudinary = (
           reject(error);
         }
         resolve(result as UploadApiResponse);
-        // delete a file asynchronously
-        // fs.unlink(path, (err) => {
-        //   if (err) {
-        //     console.log(err);
-        //   } else {
-        //     console.log("File is deleted.");
-        //   }
-        // });
       }
     );
 
@@ -47,23 +39,11 @@ export const deleteImageFromCloudinary = (
     cloudinary.uploader.destroy(imageName.trim(), function (error, result) {
       if (error) {
         reject(error);
-        console.log({ error });
       }
-      console.log({ result });
       resolve(result);
     });
   });
 };
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, process.cwd() + "/uploads/");
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-//     cb(null, file.fieldname + "-" + uniqueSuffix);
-//   },
-// });
 
 // Configure multer to use memory storage instead of disk storage
 const storage = multer.memoryStorage();

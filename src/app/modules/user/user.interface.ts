@@ -1,9 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { Model } from "mongoose";
 import { USER_ROLE } from "./user.constant";
-
+export type TImage = {
+  id: string;
+  url: string;
+  isRemove: boolean;
+};
 export interface TUser {
   name: string;
+  image: TImage[];
   email: string;
   password: string;
   phone: string;

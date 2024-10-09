@@ -32,6 +32,7 @@ const getAllBike = catchAsync(async (req, res) => {
     sortOrderString,
     searchQuery as string
   );
+
   const data = result.length > 0 || false;
   sendResponse(res, {
     success: data ? true : false,
@@ -57,8 +58,15 @@ const updateBike = catchAsync(async (req, res) => {
   const user = req.user;
   const { id } = req.params;
   const bikeUpdateData = req.body;
+  const imageFiles =
+    Array.isArray(req?.files) && req.files !== undefined ? req.files : [];
 
-  const result = await BikeServices.updateBikes(id, user, bikeUpdateData);
+  const result = await BikeServices.updateBikes(
+    id,
+    imageFiles,
+    user,
+    bikeUpdateData
+  );
 
   sendResponse(res, {
     success: true,
@@ -79,6 +87,18 @@ const deleteBike = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const SendFeedback = catchAsync(async (req, res) => {
+  const feedback = req.body;
+
+  await BikeServices.sendFeedback(feedback);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Send feedback successfully",
+    data: null,
+  });
+});
 
 export const BikeControllers = {
   createBike,
@@ -86,4 +106,5 @@ export const BikeControllers = {
   getSingleBike,
   updateBike,
   deleteBike,
+  SendFeedback,
 };

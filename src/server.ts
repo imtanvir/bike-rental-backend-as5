@@ -9,7 +9,7 @@ async function main() {
     // await mongoose.connect("mongodb://localhost:27017");
     superAdmin();
     app.listen(config.port, () => {
-      console.log(`Example app listening on port ${config.port}`);
+      console.log(`Bike Rental backend listening on port ${config.port}`);
     });
   } catch (error) {
     throw new Error(JSON.stringify(error));

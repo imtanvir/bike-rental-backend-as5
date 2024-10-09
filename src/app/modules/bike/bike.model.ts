@@ -16,6 +16,7 @@ const BikeSchema = new Schema<TBike, BikeExtend>({
         _id: false,
         id: { type: String, required: true },
         url: { type: String, required: true },
+        isRemove: { type: Boolean, default: false },
       },
     ],
     default: [],

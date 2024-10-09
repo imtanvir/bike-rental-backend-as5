@@ -11,7 +11,7 @@ const advancePayment = async (amount: number) => {
   const result = {
     clientSecret: paymentIntent.client_secret,
   };
-  console.log({ paymentIntent });
+
   return result;
 };
 

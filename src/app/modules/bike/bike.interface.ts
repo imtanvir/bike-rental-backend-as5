@@ -2,6 +2,11 @@ import { Model } from "mongoose";
 export type TImage = {
   id: string;
   url: string;
+  isRemove: boolean;
+};
+export type TFeedback = {
+  email: string;
+  message: string;
 };
 export interface TBike {
   name: string;
