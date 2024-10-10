@@ -17,12 +17,27 @@ const couponCheck = async (couponCode: string, userId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, "Coupon not found!");
   }
 
+  const isExpired = result[0]?.createDate;
+  const createDateConvertInTime = new Date(isExpired).getTime();
+  const currentDate = new Date().getTime();
+
+  const differenceInMs = currentDate - createDateConvertInTime;
+  const differenceInHours = Math.round(differenceInMs / (1000 * 60 * 60));
+
+  if (differenceInHours > 24) {
+    await CouponModel.findByIdAndUpdate(
+      { _id: result[0]?._id },
+      { isExpired: true },
+      { new: true }
+    );
+    throw new AppError(httpStatus.BAD_REQUEST, "Coupon is expired!");
+  }
+
   return result;
 };
 
 const getAllCoupons = async () => {
   const result = await CouponModel.find({}).populate("userId");
-  console.log({ couponS: result });
   return result;
 };
 

@@ -10,6 +10,7 @@ export type TRental = {
   totalCost: number;
   isReturned: boolean;
   advancePaid: number;
+  getBackAmount?: number;
   pendingCalculation: boolean;
   isPaid: boolean;
   discountApplied: boolean;

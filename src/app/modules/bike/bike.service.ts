@@ -181,7 +181,11 @@ const deleteBike = async (_id: string) => {
   return result;
 };
 const sendFeedback = async (feedbackData: TFeedback) => {
-  feedbackMailSend(feedbackData.email, feedbackData.message);
+  try {
+    await feedbackMailSend(feedbackData.email, feedbackData.message);
+  } catch (error) {
+    console.error("Error sending feedback email:", error);
+  }
 };
 export const BikeServices = {
   createBikeIntoDB,

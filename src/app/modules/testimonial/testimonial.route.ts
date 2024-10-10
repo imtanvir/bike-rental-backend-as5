@@ -5,6 +5,7 @@ import { TestimonialController } from "./testimonial.controller";
 
 const router = express.Router();
 
+router.get("/all-testimonial", TestimonialController.getAllTestimonial);
 router.post(
   "/create",
   authCheck(USER_ROLE.user),

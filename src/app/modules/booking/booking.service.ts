@@ -55,6 +55,7 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
 
   try {
     session.startTransaction();
+    let returnRentedBike: TRental | null = null;
     const bikeDetails = await BikeModel.findOne({ _id: isRentExist?.bikeId });
 
     const startTime = new Date(isRentExist?.startTime);
@@ -69,19 +70,55 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
 
     const totalCost: number =
       (bikeDetails?.pricePerHour as number) * hoursOfRented;
+    const rentalDetails = await RentalModel.findById({ _id });
 
-    const returnRentedBike = await RentalModel.findOneAndUpdate(
-      { _id },
-      {
-        totalCost: totalCost,
-        pendingCalculation: false,
-      },
-      {
-        new: true,
-        runValidators: true,
-        session,
-      }
-    );
+    if (rentalDetails && rentalDetails?.advancePaid > totalCost) {
+      const checkWithAdvancePayment = rentalDetails?.advancePaid - totalCost;
+      returnRentedBike = await RentalModel.findOneAndUpdate(
+        { _id },
+        {
+          totalCost: totalCost,
+          getBackAmount: checkWithAdvancePayment,
+          pendingCalculation: false,
+          isReturned: true,
+          isPaid: true,
+        },
+        {
+          new: true,
+          runValidators: true,
+          session,
+        }
+      );
+    } else if (rentalDetails && rentalDetails?.advancePaid < totalCost) {
+      const checkWithAdvancePayment = totalCost - rentalDetails?.advancePaid;
+      returnRentedBike = await RentalModel.findOneAndUpdate(
+        { _id },
+        {
+          totalCost: checkWithAdvancePayment,
+          pendingCalculation: false,
+        },
+        {
+          new: true,
+          runValidators: true,
+          session,
+        }
+      );
+    } else {
+      returnRentedBike = await RentalModel.findOneAndUpdate(
+        { _id },
+        {
+          totalCost: 0,
+          isPaid: true,
+          isReturned: true,
+          pendingCalculation: false,
+        },
+        {
+          new: true,
+          runValidators: true,
+          session,
+        }
+      );
+    }
 
     if (!returnRentedBike) {
       throw new AppError(httpStatus.NOT_FOUND, "Rent details not exist");
@@ -93,7 +130,6 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
   } catch (error) {
     await session.abortTransaction();
     await session.endSession();
-    console.log({ error });
     throw new AppError(httpStatus.CONFLICT, "Rented bike return failed!");
   }
 };
@@ -109,6 +145,7 @@ const rentCostPayment = async (rentId: string) => {
     { _id: rentId },
     {
       isPaid: true,
+      isReturned: true,
     },
     {
       new: true,
@@ -179,8 +216,6 @@ const userSingleRental = async (rentalId: string) => {
 
 const allRentals = async () => {
   const rentAll = await RentalModel.find({}).populate(["bikeId", "userId"]);
-  console.log({ all_Rental: rentAll });
-
   return rentAll;
 };
 

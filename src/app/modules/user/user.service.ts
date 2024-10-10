@@ -121,6 +121,14 @@ const userDelete = async (_id: string) => {
   return result;
 };
 
+const getSingleUser = async (_id: string) => {
+  const result = await UserModel.findById({ _id });
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not exist");
+  }
+  return result;
+};
+
 export const UserService = {
   getProfile,
   updateProfile,
@@ -128,4 +136,5 @@ export const UserService = {
   getAllUsers,
   getAdmins,
   userDelete,
+  getSingleUser,
 };

@@ -19,7 +19,7 @@ const TestimonialSchema = new Schema<TTestimonial>({
   rating: {
     type: Number,
     required: [true, "rating is required"],
-    default: 5,
+    default: 0,
   },
 });
 

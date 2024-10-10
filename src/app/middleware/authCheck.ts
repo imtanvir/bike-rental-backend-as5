@@ -25,9 +25,7 @@ const authCheck = (...requiredRole: TUserRole[]) => {
       refreshToken.refreshToken,
       config.jwt_refresh_secret as string
     ) as JwtPayload;
-    console.log({
-      refreshTokenDecoded,
-    });
+
     // Verify Token and retrieve data from it
     let decoded;
     try {
@@ -51,7 +49,7 @@ const authCheck = (...requiredRole: TUserRole[]) => {
     ) {
       throw new AppError(httpStatus.UNAUTHORIZED, "Token session expired!");
     }
-    console.log(decoded.role, requiredRole);
+
     if (requiredRole && !requiredRole.includes(decoded.role)) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,

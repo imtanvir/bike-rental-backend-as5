@@ -31,12 +31,17 @@ const rentalSchema = new Schema<TRental>(
       required: true,
       default: 0,
     },
+    getBackAmount: {
+      type: Number,
+      default: 0,
+    },
     isReturned: {
       type: Boolean,
       default: false,
     },
     advancePaid: {
       type: Number,
+      required: true,
       default: 0,
     },
     pendingCalculation: {

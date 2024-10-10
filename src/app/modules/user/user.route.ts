@@ -16,6 +16,12 @@ router.get(
 );
 
 router.get(
+  "/single-user/:id",
+  authCheck(USER_ROLE.superAdmin, USER_ROLE.admin),
+  UserController.getSingleUser
+);
+
+router.get(
   "/all-users",
   authCheck(USER_ROLE.superAdmin, USER_ROLE.admin),
   UserController.getAllUsers
@@ -36,4 +42,5 @@ router.put(
   requestValidation(UserValidation.profileUpdateValidationSchema),
   UserController.updateProfile
 );
+
 export const UserRoutes = router;
