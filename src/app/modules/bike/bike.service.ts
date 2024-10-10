@@ -184,7 +184,7 @@ const sendFeedback = async (feedbackData: TFeedback) => {
   try {
     await feedbackMailSend(feedbackData.email, feedbackData.message);
   } catch (error) {
-    console.error("Error sending feedback email:", error);
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Feedback failed!");
   }
 };
 export const BikeServices = {

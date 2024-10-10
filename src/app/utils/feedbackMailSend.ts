@@ -19,7 +19,6 @@ export const feedbackMailSend = async (to: string, message: string) => {
       subject: "User Feedback Message",
       text: message,
     });
-    console.log("Email sent successfully!");
   } catch (error) {
     console.error("Error sending email:", error);
   }

@@ -6,7 +6,7 @@ import { UserService } from "./user.service";
 
 const getProfile = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
-  // const atoken = req.headers.authorization;
+
   const result = await UserService.getProfile(user.email);
   if (!result) {
     return sendResponse(res, {
@@ -88,7 +88,7 @@ const deleteUser = catchAsync(async (req, res) => {
 
 const getSingleUser = catchAsync(async (req, res) => {
   const { id } = req.body;
-  console.log(id);
+
   const result = await UserService.getSingleUser(id);
   sendResponse(res, {
     success: true,
