@@ -1,10 +1,12 @@
 import { BikeModel } from "../bike/bike.model";
+import { RentalModel } from "../booking/booking.model";
 import { TTestimonial } from "./testimonial.interface";
 import { TestimonialModel } from "./testimonial.model";
 
 const createTestimonial = async (
   payload: TTestimonial,
-  bikeTotalRating: number
+  bikeTotalRating: number,
+  rentalId: string
 ) => {
   const { bikeId, rating } = payload;
   const result = await TestimonialModel.create(payload);
@@ -12,7 +14,13 @@ const createTestimonial = async (
   if (result) {
     await BikeModel.findByIdAndUpdate(
       { _id: bikeId },
-      { rating: rating, totalRating: bikeTotalRating + rating },
+      { $push: { rating: rating }, totalRating: bikeTotalRating + 1 },
+      { new: true }
+    );
+
+    await RentalModel.findByIdAndUpdate(
+      { _id: rentalId },
+      { feedBackSubmitted: true },
       { new: true }
     );
   }

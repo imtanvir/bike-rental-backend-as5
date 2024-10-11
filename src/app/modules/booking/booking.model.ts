@@ -56,6 +56,10 @@ const rentalSchema = new Schema<TRental>(
       type: Boolean,
       default: false,
     },
+    feedBackSubmitted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

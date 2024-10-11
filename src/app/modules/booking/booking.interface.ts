@@ -12,6 +12,7 @@ export type TRental = {
   advancePaid: number;
   getBackAmount?: number;
   pendingCalculation: boolean;
+  feedBackSubmitted: boolean;
   isPaid: boolean;
   discountApplied: boolean;
 };

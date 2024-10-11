@@ -14,7 +14,7 @@ export interface TBike {
   description: string;
   pricePerHour: number;
   isAvailable?: boolean;
-  rating?: number;
+  rating?: number[];
   totalRating?: number;
   cc: number;
   year: number;

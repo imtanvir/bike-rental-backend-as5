@@ -7,10 +7,13 @@ const createTestimonial = catchAsync(async (req, res) => {
   const {
     data,
     bikeTotalRating,
-  }: { data: TTestimonial; bikeTotalRating: number } = req.body;
+    rentalId,
+  }: { data: TTestimonial; bikeTotalRating: number; rentalId: string } =
+    req.body;
   const result = await TestimonialServices.createTestimonial(
     data,
-    bikeTotalRating
+    bikeTotalRating,
+    rentalId
   );
 
   sendResponse(res, {

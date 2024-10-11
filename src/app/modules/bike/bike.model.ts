@@ -30,8 +30,8 @@ const BikeSchema = new Schema<TBike, BikeExtend>({
     default: true,
   },
   rating: {
-    type: Number,
-    default: 0,
+    type: [Number],
+    default: [],
   },
   totalRating: {
     type: Number,

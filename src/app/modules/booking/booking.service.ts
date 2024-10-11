@@ -82,6 +82,7 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
           pendingCalculation: false,
           isReturned: true,
           isPaid: true,
+          isAvailable: true,
         },
         {
           new: true,
@@ -146,6 +147,7 @@ const rentCostPayment = async (rentId: string) => {
     {
       isPaid: true,
       isReturned: true,
+      isAvailable: true,
     },
     {
       new: true,
@@ -171,7 +173,10 @@ const rentCostPayment = async (rentId: string) => {
 const userRentals = async (user: JwtPayload) => {
   const { _id } = user;
 
-  const result = await RentalModel.find({ userId: _id }).populate("bikeId");
+  const result = await RentalModel.find({ userId: _id }).populate([
+    "bikeId",
+    "userId",
+  ]);
 
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, "User rentals not exist");
