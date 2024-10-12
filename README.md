@@ -2,7 +2,7 @@
 
 Welcome to the Bike Rental Reservation System backend project! This backend is designed to support a seamless bike rental service. Below you'll find a comprehensive overview of the project, its features, the technologies used, and how to set it up and run it on your local machine.
 
-Live: [https://assignment-3-kappa-dun.vercel.app/]
+Backend Api Live: [https://bike-rental-backend-as5.vercel.app/]
 
 ---
 
@@ -15,6 +15,7 @@ This backend system is developed for a bike rental service that allows users to 
 - **User Authentication and Authorization:** Secure sign-up, login, and profile management.
 - **Bike Management:** CRUD operations for managing bikes (admin only).
 - **Rental Management:** Create and manage bike rentals with automatic cost calculation.
+- **Bike, User, Coupon, Profile, CRUD Management.
 - **Error Handling:** Comprehensive error handling for robust API responses.
 - **Data Validation:** Uses Zod for request validation to ensure data integrity.
 
@@ -26,6 +27,7 @@ This backend system is developed for a bike rental service that allows users to 
 - **ODM:** Mongoose
 - **Validation Library:** Zod
 - **Authentication:** JWT (JSON Web Token)
+- **Cludinary for Image CRUD
 
 ## 🚀 Getting Started
 
