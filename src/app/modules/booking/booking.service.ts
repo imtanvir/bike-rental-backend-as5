@@ -70,11 +70,17 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
 
     const totalCost: number =
       (bikeDetails?.pricePerHour as number) * hoursOfRented;
-    const rentalDetails = await RentalModel.findById({ _id });
 
-    if (rentalDetails && rentalDetails?.advancePaid > totalCost) {
-      const checkWithAdvancePayment = rentalDetails?.advancePaid - totalCost;
-      returnRentedBike = await RentalModel.findOneAndUpdate(
+    if (isRentExist && isRentExist?.advancePaid > totalCost) {
+      const checkWithAdvancePayment = isRentExist?.advancePaid - totalCost;
+      await BikeModel.findByIdAndUpdate(
+        { _id: isRentExist?.bikeId },
+        {
+          isAvailable: true,
+        },
+        { new: true, session }
+      );
+      returnRentedBike = await RentalModel.findByIdAndUpdate(
         { _id },
         {
           totalCost: totalCost,
@@ -82,7 +88,6 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
           pendingCalculation: false,
           isReturned: true,
           isPaid: true,
-          isAvailable: true,
         },
         {
           new: true,
@@ -90,9 +95,9 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
           session,
         }
       );
-    } else if (rentalDetails && rentalDetails?.advancePaid < totalCost) {
-      const checkWithAdvancePayment = totalCost - rentalDetails?.advancePaid;
-      returnRentedBike = await RentalModel.findOneAndUpdate(
+    } else if (isRentExist && isRentExist?.advancePaid < totalCost) {
+      const checkWithAdvancePayment = totalCost - isRentExist?.advancePaid;
+      returnRentedBike = await RentalModel.findByIdAndUpdate(
         { _id },
         {
           totalCost: checkWithAdvancePayment,
@@ -105,10 +110,19 @@ const rentBikeReturnAcceptAndCostCalculate = async (_id: string) => {
         }
       );
     } else {
+      if (totalCost === isRentExist?.advancePaid) {
+        await BikeModel.findByIdAndUpdate(
+          { _id: isRentExist?.bikeId },
+          {
+            isAvailable: true,
+          },
+          { new: true, session }
+        );
+      }
       returnRentedBike = await RentalModel.findOneAndUpdate(
         { _id },
         {
-          totalCost: 0,
+          totalCost: 100,
           isPaid: true,
           isReturned: true,
           pendingCalculation: false,
@@ -141,13 +155,19 @@ const rentCostPayment = async (rentId: string) => {
   if (!rent) {
     throw new AppError(httpStatus.NOT_FOUND, "Rental details not exist");
   }
+  await BikeModel.findByIdAndUpdate(
+    { _id: rent?.bikeId },
+    {
+      isAvailable: true,
+    },
+    { new: true }
+  );
 
   const result = await RentalModel.findOneAndUpdate(
     { _id: rentId },
     {
       isPaid: true,
       isReturned: true,
-      isAvailable: true,
     },
     {
       new: true,
@@ -187,7 +207,7 @@ const userRentals = async (user: JwtPayload) => {
 
 const rentEndSubmitByUser = async (
   rentId: string,
-  bikeReturnTimeOfUser: { [key: string]: Date }
+  bikeReturnTimeOfUser: { [key: string]: string }
 ) => {
   const estimatedReturnTime = new Date(
     bikeReturnTimeOfUser?.estimatedReturnTime

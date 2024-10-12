@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 export type TRental = {
   userId: Types.ObjectId;
   bikeId: Types.ObjectId;
-  startTime: Date;
+  startTime: string;
   estimatedReturnTime: Date | null;
   returnTime: Date | null;
   totalCost: number;

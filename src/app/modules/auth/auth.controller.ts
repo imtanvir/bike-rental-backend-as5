@@ -30,7 +30,6 @@ const logInUser = catchAsync(async (req, res) => {
   const { jwtPayload, accessToken, refreshToken } = result;
 
   res.cookie("refreshToken", refreshToken, {
-    // secure: config.node_env === "production",
     secure: config.node_env !== "development",
     httpOnly: true,
     sameSite: "none",

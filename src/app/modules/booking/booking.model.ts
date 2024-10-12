@@ -15,7 +15,7 @@ const rentalSchema = new Schema<TRental>(
       required: [true, "bikeId is required"],
     },
     startTime: {
-      type: Date,
+      type: String,
       required: true,
     },
     returnTime: {
